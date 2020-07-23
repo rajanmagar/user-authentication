@@ -45,7 +45,6 @@ class SignUpFormBase extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
   };
   render() {
-    console.log(this.props.firebase);
     const { username, email, passwordOne, passwordTwo, error } = this.state;
 
     // isInvalid boolean to enable or disable the submit button
