@@ -1,31 +1,23 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 
 import { withFirebase } from '../Firebase';
-import * as Routes from '../../constants/routes';
-
-const PasswordForgetPage = () => (
-  <div>
-    <h1>Password Forget</h1>
-    <PasswordForgetForm />
-  </div>
-);
 
 const INITIAL_STATE = {
-  email: '',
+  passwordOne: '',
+  passwordTwo: '',
   error: null,
 };
 
-class PasswordForgetFormBase extends Component {
+class PasswordChangeForm extends Component {
   constructor(props) {
     super(props);
     this.state = { ...INITIAL_STATE };
   }
   onSubmit = (event) => {
     event.preventDefault();
-    const { email } = this.state;
+    const { passwordOne } = this.state;
     this.props.firebase
-      .passwordReset(email)
+      .passwordUpdate(passwordOne)
       .then(() => {
         this.setState({ ...INITIAL_STATE });
       })
@@ -37,16 +29,23 @@ class PasswordForgetFormBase extends Component {
     this.setState({ [event.target.name]: event.target.value });
   };
   render() {
-    const { email, error } = this.state;
-    const isInvalid = email === '';
+    const { passwordOne, passwordTwo, error } = this.state;
+    const isInvalid = passwordOne === '' || passwordOne !== passwordTwo;
     return (
       <form onSubmit={this.onSubmit}>
         <input
-          type='email'
-          name='email'
-          value={email}
+          type='password'
+          name='passwordOne'
+          value={passwordOne}
           onChange={this.onChange}
-          placeholder='Email Address'
+          placeholder='New Password'
+        />
+        <input
+          type='password'
+          name='passwordTwo'
+          value={passwordTwo}
+          onChange={this.onChange}
+          placeholder='Confirm New Password'
         />
         <button type='submit' disabled={isInvalid}>
           Reset My Password
@@ -57,13 +56,4 @@ class PasswordForgetFormBase extends Component {
   }
 }
 
-const PasswordForgetLink = () => (
-  <p>
-    <Link to={Routes.PASSWORD_FORGET}>Forgot Password?</Link>
-  </p>
-);
-
-export default PasswordForgetPage;
-
-const PasswordForgetForm = withFirebase(PasswordForgetFormBase);
-export { PasswordForgetForm, PasswordForgetLink };
+export default withFirebase(PasswordChangeForm);
