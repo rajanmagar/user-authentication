@@ -30,10 +30,17 @@ class SignUpFormBase extends React.Component {
   }
   onSubmit = (event) => {
     event.preventDefault();
-    const { email, passwordOne } = this.state;
+    const { username, email, passwordOne } = this.state;
     this.props.firebase
       .createUser(email, passwordOne)
       .then((authUser) => {
+        // Create a user in your Firebase realtime database
+        return this.props.firebase.user(authUser.user.uid).set({
+          username,
+          email,
+        });
+      })
+      .then(() => {
         this.setState({ ...INITIAL_STATE });
         this.props.history.push(Routes.HOME);
       })
