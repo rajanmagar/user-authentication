@@ -1,5 +1,6 @@
 import app from 'firebase/app';
 import 'firebase/auth'; // Import and instantiate the package from Firebase responsible for all the authentication
+import 'firebase/database';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -16,6 +17,7 @@ class Firebase {
   constructor() {
     app.initializeApp(firebaseConfig);
     this.auth = app.auth();
+    this.db = app.database();
   }
   // Let's define all the authentication functions as class methods step by step
   createUser = (email, password) =>
@@ -25,6 +27,9 @@ class Firebase {
   signOut = () => this.auth.signOut();
   passwordReset = (email) => this.auth.sendPasswordResetEmail(email);
   passwordUpdate = (password) => this.auth.currentUser.updatePassword(password);
+  // Database API's
+  user = (uid) => this.db.ref(`users/${uid}`);
+  users = () => this.db.ref(`users`);
 }
 
 export default Firebase;
