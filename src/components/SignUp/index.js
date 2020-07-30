@@ -4,6 +4,7 @@ import { compose } from 'recompose';
 
 import { withFirebase } from '../Firebase';
 import * as Routes from '../../constants/routes';
+import * as Roles from '../../constants/roles';
 
 const SignUpPage = () => {
   return (
@@ -20,6 +21,7 @@ const INITIAL_STATE = {
   email: '',
   passwordOne: '',
   passwordTwo: '',
+  isAdmin: false,
   error: null,
 };
 
@@ -30,7 +32,11 @@ class SignUpFormBase extends React.Component {
   }
   onSubmit = (event) => {
     event.preventDefault();
-    const { username, email, passwordOne } = this.state;
+    const { username, email, passwordOne, isAdmin } = this.state;
+    const roles = {};
+    if (isAdmin) {
+      roles[Roles.ADMIN] = Roles.ADMIN;
+    }
     this.props.firebase
       .createUser(email, passwordOne)
       .then((authUser) => {
@@ -38,6 +44,7 @@ class SignUpFormBase extends React.Component {
         return this.props.firebase.user(authUser.user.uid).set({
           username,
           email,
+          roles,
         });
       })
       .then(() => {
@@ -51,8 +58,18 @@ class SignUpFormBase extends React.Component {
   onChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
+  onChangeCheckbox = (event) => {
+    this.setState({ [event.target.name]: event.target.value });
+  };
   render() {
-    const { username, email, passwordOne, passwordTwo, error } = this.state;
+    const {
+      username,
+      email,
+      passwordOne,
+      passwordTwo,
+      isAdmin,
+      error,
+    } = this.state;
 
     // isInvalid boolean to enable or disable the submit button
     const isInvalid =
@@ -90,6 +107,15 @@ class SignUpFormBase extends React.Component {
           onChange={this.onChange}
           placeholder='Confirm Password'
         />
+        <label htmlFor='isAdmin'>
+          Admin:{' '}
+          <input
+            type='checkbox'
+            name='isAdmin'
+            checked={isAdmin}
+            onChange={this.onChangeCheckbox}
+          />
+        </label>
         <button disabled={isInvalid} type='submit'>
           Sign Up
         </button>

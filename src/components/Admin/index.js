@@ -59,6 +59,8 @@ const UserList = ({ users }) => (
   </ul>
 );
 
-const condition = (authUser) => authUser && !!authUser;
+const condition = (authUser) => {
+  return authUser && !!authUser;
+};
 
 export default withAuthorization(condition)(AdminPage);
