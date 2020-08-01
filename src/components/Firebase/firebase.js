@@ -18,12 +18,14 @@ class Firebase {
     app.initializeApp(firebaseConfig);
     this.auth = app.auth();
     this.db = app.database();
+    this.googleProvider = new app.auth.GoogleAuthProvider();
   }
   // Let's define all the authentication functions as class methods step by step
   createUser = (email, password) =>
     this.auth.createUserWithEmailAndPassword(email, password);
   signIn = (email, password) =>
     this.auth.signInWithEmailAndPassword(email, password);
+  signInWithGoogle = () => this.auth.signInWithPopup(this.googleProvider);
   signOut = () => this.auth.signOut();
   passwordReset = (email) => this.auth.sendPasswordResetEmail(email);
   passwordUpdate = (password) => this.auth.currentUser.updatePassword(password);
